@@ -1,0 +1,71 @@
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+import os
+
+app = Flask(__name__)
+# Konfigurasi Database SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.expanduser('~'), 'nota_stroller', 'stroller.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# --- DATABASE MODEL ---
+class Setting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nama_toko = db.Column(db.String(100))
+    alamat = db.Column(db.String(200))
+    no_hp = db.Column(db.String(20))
+
+class Stroller(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nama = db.Column(db.String(100))
+    harga = db.Column(db.Integer)
+
+class Transaksi(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nama_penyewa = db.Column(db.String(100))
+    no_wa = db.Column(db.String(20))
+    stroller = db.Column(db.String(100))
+    lama_sewa = db.Column(db.Integer)
+    total = db.Column(db.Integer)
+
+# Buat database otomatis jika belum ada
+with app.app_context():
+    db.create_all()
+
+# --- ROUTES (HALAMAN WEB) ---
+@app.route('/')
+def index():
+    return "<h1>Selamat Datang di Aplikasi Nota Stroller</h1><p><a href='/kasir'>Ke Halaman Kasir</a></p>"
+
+@app.route('/kasir', methods=['GET', 'POST'])
+def kasir():
+    if request.method == 'POST':
+        nama = request.form['nama']
+        wa = request.form['wa']
+        stroller_pilihan = request.form['stroller']
+        lama = int(request.form['lama'])
+        harga_sewa = 50000 # Contoh harga sementara
+        total = lama * harga_sewa
+        
+        transaksi_baru = Transaksi(nama_penyewa=nama, no_wa=wa, stroller=stroller_pilihan, lama_sewa=lama, total=total)
+        db.session.add(transaksi_baru)
+        db.session.commit()
+        return f"<h3>Berhasil! Nota atas nama {nama} telah disimpan.</h3><a href='/kasir'>Kembali</a>"
+        
+    return """
+    <h2>Form Kasir Stroller</h2>
+    <form method="POST">
+        Nama Penyewa: <input type="text" name="nama" required><br><br>
+        No WA: <input type="text" name="wa" required><br><br>
+        Pilih Stroller: 
+        <select name="stroller">
+            <option value="Stroller Bayi A">Stroller Bayi A</option>
+            <option value="Stroller Bayi B">Stroller Bayi B</option>
+        </select><br><br>
+        Lama Sewa (Hari): <input type="number" name="lama" required><br><br>
+        <button type="submit">Simpan Nota</button>
+    </form>
+    """
+
+# --- JALANKAN SERVER ---
+

@@ -136,4 +136,4 @@ def riwayat():
     return render_template('riwayat.html', transaksi=transaksi, total_pendapatan=total_pendapatan)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host="127.0.0.1", port=int(os.environ.get("PORT", 5000)), debug=False)

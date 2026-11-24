@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">⚙️ Pengaturan Toko</h4>
+<div class="card p-3">
+    <form method="POST">
+        <div class="mb-2">
+            <label>Nama Toko</label>
+            <input type="text" name="nama_toko" class="form-control" value="{{ s.nama_toko }}" required>
+        </div>
+        <div class="mb-2">
+            <label>Alamat</label>
+            <input type="text" name="alamat" class="form-control" value="{{ s.alamat }}" required>
+        </div>
+        <div class="mb-3">
+            <label>No HP / WA</label>
+            <input type="text" name="no_hp" class="form-control" value="{{ s.no_hp }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Simpan Pengaturan</button>
+    </form>
+</div>
+{% endblock %}

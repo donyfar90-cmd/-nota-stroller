@@ -30,8 +30,13 @@ jobs:
         export PATH=$PATH:~/.local/bin
         yes | buildozer -v android debug 2>&1 | tee build.log
         
+    - name: Find APK
+      run: |
+        echo "Mencari file APK di seluruh direktori..."
+        find . -name "*.apk" -exec cp {} ./app-debug.apk \;
+        
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Nota-Stroller-APK
-        path: bin/*.apk
+        path: ./app-debug.apk

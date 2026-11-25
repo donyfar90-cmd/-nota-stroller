@@ -34,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Nota-Stroller-APK
-        path: bin/*.apk
+        path: .buildozer/android/platform/build-*/dists/*/bin/*.apk

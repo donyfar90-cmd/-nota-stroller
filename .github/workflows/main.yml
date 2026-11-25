@@ -30,8 +30,12 @@ jobs:
         export PATH=$PATH:~/.local/bin
         yes | buildozer -v android debug 2>&1 | tee build.log
         
-    - name: Upload Entire Bin Folder
+    - name: Copy APK to Root
+      run: |
+        find . -name "*.apk" -exec cp {} ./app.apk \;
+        
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Nota-Stroller-APK
-        path: bin/
+        path: app.apk

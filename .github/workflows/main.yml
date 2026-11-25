@@ -1,4 +1,5 @@
 name: Build APK
+
 on:
   push:
     branches: [ "main" ]
@@ -8,30 +9,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-        
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool automake pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libltdl-dev
-        pip3 install --user --upgrade buildozer cython virtualenv
-        
-    - name: Accept Android Licenses
-      run: |
-        yes | sudo $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        
-    - name: Build with Buildozer
-      run: |
-        export PATH=$PATH:~/.local/bin
-        yes | buildozer -v android debug 2>&1 | tee build.log
-        
-    - name: Upload Whole Build Directory
-      uses: actions/upload-artifact@v4
-      with:
-        name: Nota-Stroller-Hasil-Build
-        path: .buildozer/android/platform/build-*/dists/
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool automake pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev libltdl-dev
+          python3 -m pip install --upgrade pip wheel setuptools buildozer cython==0.29.36 virtualenv
+
+      - name: Accept Android Licenses
+        run: |
+          yes | sudo $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+      - name: Build with Buildozer
+        run: |
+          export PATH="$PATH:$HOME/.local/bin"
+          buildozer -v android debug 2>&1 | tee build.log
+
+      - name: Upload APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nota-Stroller-APK
+          path: bin/*.apk
+
+      - name: Upload Build Log on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Buildozer-Error-Log
+          path: build.log

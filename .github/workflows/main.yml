@@ -30,6 +30,8 @@ jobs:
         run: |
           export PATH="$PATH:$HOME/.local/bin"
           buildozer -v android debug 2>&1 | tee build.log
+          ls -la bin/ || true
+          find . -name "*.apk" || true
 
       - name: Upload APK
         if: success()

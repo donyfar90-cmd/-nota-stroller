@@ -9,6 +9,7 @@ requirements = python3,flask,kivy
 orientation = portrait
 fullscreen = 1
 android.permissions = INTERNET
+android.accept_sdk_license = True
 android.api = 30
 android.minapi = 21
 android.ndk = 25b

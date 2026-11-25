@@ -16,4 +16,3 @@ android.archs = arm64-v8a
 p4a.branch = master
 android.accept_sdk_license = True
 android.release_artifact = apk
-android.accept_sdk_license = True
